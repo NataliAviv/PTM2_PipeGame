@@ -1,40 +1,17 @@
 package view;
+import Theme.ThemeDisplayer;
+import Theme.ThemeMap;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
+
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.paint.Color;
-
 public class PipeDisplayer extends Canvas {
-
-	int X, Y;
-
-	public int getX() {
-		return X;
-	}
-
-	public void setX(int x) {
-		X = x;
-	}
-
-	public int getY() {
-		return Y;
-	}
-
-	public void setY(int y) {
-		Y = y;
-	}
-
+	char[][] pipeData;
+	ThemeMap themeMap;
+	
 	public PipeDisplayer() {
-		wallFileName = new SimpleStringProperty();
 		PipeDisplayer pipeDisplayer=this;
 		   this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 		
@@ -48,110 +25,28 @@ public class PipeDisplayer extends Canvas {
 		  int i = my / h; 
 		  int j = mx / w;
 		  pipeDisplayer.switchCell(i, j, 1);
-		  
 		  } });
 	}
 
-	char[][] pipeData;
-	private StringProperty wallFileName;
-
-	public String getWallFileName() {
-		return wallFileName.get();
-	}
-
-	public void setWallFileName(String wallFileName) {
-		this.wallFileName.set(wallFileName);
-	}
-
-	GraphicsContext g = getGraphicsContext2D();
-
-	public void setPipeData(char[][] pipeData) {
+	public void setPipeData(char[][] pipeData, ThemeDisplayer themeDisp) {
 		this.pipeData = pipeData;
-		redraw(g);
+		this.themeMap=new ThemeMap(themeDisp);
+		redraw();
 	}
 
-	public void redraw(GraphicsContext gc) {
-
-		int H = (int) this.getHeight();
-		int W = (int) this.getWidth();
-		gc.clearRect(0, 0, W, H);
-		int h = (int) ((double) H / (double) this.pipeData.length);
-		int w = (int) ((double) W / (double) this.pipeData[0].length);
-		gc.setFill(Color.BLACK);
-		Image line = null;
-		try {
-			line = new Image(new FileInputStream("./Images/-.jpg"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		Image seven = null;
-		try {
-			seven = new Image(new FileInputStream("./Images/7.jpg"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		Image f = null;
-		try {
-			f = new Image(new FileInputStream("./Images/F.jpg"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		Image je = null;
-		try {
-			je = new Image(new FileInputStream("./Images/J.jpg"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		Image l = null;
-		try {
-			l = new Image(new FileInputStream("./Images/L.jpg"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		Image ie = null;
-		try {
-			ie = new Image(new FileInputStream("./Images/I.jpg"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		for (int i = 0; i < this.pipeData.length; ++i) {
-			for (int j = 0; j < this.pipeData[i].length; ++j) {
-				gc.rect(j * w, i * h, w, h);
-				switch (this.pipeData[i][j]) {
-				case '-':
-					gc.drawImage(line, j*w, i*h, w, h);
-					break;
-				case '7':
-					gc.drawImage(seven, j*w, i*h, w, h);
-
-					break;
-				case 'F':
-					gc.drawImage(f, j*w, i*h, w, h);
-
-					break;
-				case 'J':
-					gc.drawImage(je, j*w, i*h, w, h);
-
-					break;
-				case 'L':
-					gc.drawImage(l, j*w, i*h, w, h);
-
-					break;
-				case 'g':
-					gc.setFill(Color.RED);
-					gc.strokeOval(j * w + w / 6, i * h + h / 6, 4 * w / 6, 4 * h / 6);
-					gc.fillOval(j * w + w / 4, i * h + h / 4, w / 2, h / 2);
-					break;
-				case 's':
-					gc.setFill(Color.GREEN);
-					gc.fillOval(j * w + w / 4, i * h + h / 4, w / 2, h / 2);
-					break;
-				case '|':
-					gc.drawImage(ie, j*w, i*h, w, h);
-
-					break;
+	public void redraw() {
+		if(pipeData!=null){
+			double W = getWidth();
+			double H = getHeight();
+			double w = W/pipeData[0].length;
+			double h = H/pipeData.length;
+			GraphicsContext gc=getGraphicsContext2D();
+			gc.clearRect(0, 0, W, H);
+			for(int i=0;i<pipeData.length;i++)
+				for(int j=0;j<pipeData[i].length;j++){
+					if(pipeData[i][j]!=' ')
+						gc.drawImage(themeMap.getImage(pipeData[i][j]), j*w, i*h, w, h);
 				}
-			}
 		}
 	}
 
@@ -177,7 +72,7 @@ public class PipeDisplayer extends Canvas {
 				this.pipeData[i][j] = '-';
 			}
 
-			this.redraw(g);
+			this.redraw();
 			if (t < times - 1) {
 				try {
 					Thread.sleep(100L);

@@ -4,14 +4,12 @@ package view;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
 
+import Theme.FirstTheme;
+import Theme.SecondTheme;
 import javafx.beans.property.StringProperty;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-
 import javafx.stage.FileChooser;
 
 public class MainWindowsController implements Initializable {
@@ -29,9 +27,10 @@ public class MainWindowsController implements Initializable {
 
 	
 	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		pipeDisplayer.setPipeData(pipeData);
+	public void initialize(URL location, ResourceBundle resources) 
+	{
 		
+		pipeDisplayer.setPipeData(pipeData,new FirstTheme());
 	}
 
 	public void start() {

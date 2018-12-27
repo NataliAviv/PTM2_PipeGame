@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import view.PipeDisplayer?>
+
 <BorderPane prefHeight="520.0" prefWidth="646.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MainWindowsController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
@@ -21,14 +22,15 @@
               <MenuItem mnemonicParsing="false" text="Close" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
+          <Menu mnemonicParsing="false" text="Change Theme">
             <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
+                  <MenuItem mnemonicParsing="false" text="first" />
+              <MenuItem mnemonicParsing="false" text="second" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" text="help" />
             </items>
           </Menu>
         </menus>
@@ -49,6 +51,14 @@
       <HBox spacing="5.0" BorderPane.alignment="CENTER">
          <children>
             <Label text="status" />
+            <Label text="Timer">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets left="60.0" />
+               </padding>
+            </Label>
          </children>
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -56,6 +66,6 @@
       </HBox>
    </bottom>
    <center>
-      <PipeDisplayer fx:id="pipeDisplayer" height="400.0" width="400.0" BorderPane.alignment="CENTER" />
+      <PipeDisplayer fx:id="pipeDisplayer" height="445.0" width="562.0" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>
