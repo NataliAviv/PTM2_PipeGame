@@ -1,11 +1,16 @@
-package Theme;
+package theme;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 import javafx.scene.image.Image;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
+import javafx.util.Duration;
 
 public class ThemeMap {
 
@@ -36,7 +41,8 @@ public class ThemeMap {
 			imagesPath.put('F', new ImageURL(theme.getPipe_F()));
 			imagesPath.put('s', new ImageURL(theme.get_s()));
 			imagesPath.put('g', new ImageURL(theme.get_g()));
-		}
+			
+	}
 
 	public Image getImage(char type) {
 		if (!images.containsKey(type)) {
@@ -53,5 +59,22 @@ public class ThemeMap {
 		}
 		return images.get(type);
 	}
+	public void Music() throws FileNotFoundException {
+	    MediaPlayer musicplayer; 
+	    Media mp3MusicFile = new Media(Paths.get("./resources/FistTheme/Song.mp3").toUri().toString()); 
+		musicplayer = new MediaPlayer(mp3MusicFile);
+		if(mp3MusicFile!=null) {
+			mp3MusicFile.setOnError(null);}
+   
+		musicplayer.setAutoPlay(true);
+		musicplayer.setVolume(0.9);   // from 0 to 1      
+		//***************** loop (repeat) the music  ******************
+		musicplayer.setOnEndOfMedia(new Runnable() {    
+		public void run() {
+		musicplayer.seek(Duration.ZERO); 
+         }
+		 });
+	}
+	
 
 }

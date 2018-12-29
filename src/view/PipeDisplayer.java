@@ -1,12 +1,11 @@
 package view;
-import Theme.ThemeDisplayer;
-import Theme.ThemeMap;
-
 import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 import javafx.scene.input.MouseEvent;
+import theme.ThemeDisplayer;
+import theme.ThemeMap;
 public class PipeDisplayer extends Canvas {
 	char[][] pipeData;
 	ThemeMap themeMap;
@@ -49,7 +48,37 @@ public class PipeDisplayer extends Canvas {
 				}
 		}
 	}
+	
+	public void resize(double width, double height) {
+        super.setWidth(width);
+        super.setHeight(height);
+        redraw();
+    }
 
+	public boolean isResizable() {
+		return true;
+	}
+	public double minHeight(double width) {
+		return 100;
+	}
+
+	public double maxHeight(double width) {
+		return 1200;
+	}
+
+
+	public double prefHeight(double width) {
+		return minHeight(width);
+	}
+
+
+	public double minWidth(double height) {
+		return 0;
+	}
+
+	public double maxWidth(double height) {
+		return 10000;
+	}
 	public void switchCell(int i, int j, int times) {
 		for (int t = 0; t < times; ++t) {
 			switch (this.pipeData[i][j]) {

@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import javax.swing.JOptionPane;
 
 public class Model {
 	public static void solve(String ip, int port, PipeDisplayer pipe) {
@@ -35,7 +34,7 @@ public class Model {
 			out.close();
 			theServer.close();
 		} catch (IOException var11) {
-			JOptionPane.showInputDialog(pipe, var11.getMessage());
+			//JOptionPane.showInputDialog(pipe, var11.getMessage());
 		}
 
 	}

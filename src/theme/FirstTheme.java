@@ -1,7 +1,7 @@
-package Theme;
+package theme;
+
 
 public class FirstTheme implements ThemeDisplayer	{
-
 	@Override
 	public String get_Line() {
 		return "./resources/FirstTheme/-.jpg";

@@ -1,4 +1,4 @@
-package Theme;
+package theme;
 
 public interface ThemeDisplayer {
 	String get_Line();

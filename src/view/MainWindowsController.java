@@ -5,12 +5,12 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import Theme.FirstTheme;
-import Theme.SecondTheme;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.stage.FileChooser;
+import theme.FirstTheme;
+import theme.SecondTheme;
 
 public class MainWindowsController implements Initializable {
 	char[][] pipeData = { 
@@ -31,6 +31,7 @@ public class MainWindowsController implements Initializable {
 	{
 		
 		pipeDisplayer.setPipeData(pipeData,new FirstTheme());
+		
 	}
 
 	public void start() {
@@ -40,7 +41,7 @@ public class MainWindowsController implements Initializable {
 	public void openFile() {
 		FileChooser fc = new FileChooser();
 		fc.setTitle("open pipe file");
-		fc.setInitialDirectory(new File("./Images"));
+		fc.setInitialDirectory(new File("./resources"));
 		fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Prawn XML files", "*.xml"));
 		File chosen = fc.showOpenDialog(null);
 		if (chosen != null) {

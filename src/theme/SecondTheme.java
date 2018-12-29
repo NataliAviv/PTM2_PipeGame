@@ -1,4 +1,4 @@
-package Theme;
+package theme;
 
 public class SecondTheme implements ThemeDisplayer {
 
