@@ -41,7 +41,7 @@ public class MainWindowsController implements Initializable {
 	public void openFile() {
 		FileChooser fc = new FileChooser();
 		fc.setTitle("open pipe file");
-		fc.setInitialDirectory(new File("./resources"));
+		fc.setInitialDirectory(new File("./Images"));
 		fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Prawn XML files", "*.xml"));
 		File chosen = fc.showOpenDialog(null);
 		if (chosen != null) {

@@ -1,7 +1,19 @@
 package theme;
 
-public class SecondTheme implements ThemeDisplayer {
 
+
+public class SecondTheme implements ThemeDisplayer {
+	/*public Media music;
+	public Image backgroundImage;
+	
+	public SecondTheme() {
+		try {
+			this.backgroundImage = new Image(new FileInputStream("./resources/SecondTheme/background.jpg"));
+			this.music = new Media (new File("./resources/SecondTheme/MarioSong.mp3").toURI().toString());
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}	
+	}*/
 	@Override
 	public String get_Line() {
 		return "./resources/SecondTheme/theme-.png";
@@ -41,4 +53,17 @@ public class SecondTheme implements ThemeDisplayer {
 	public String get_g() {
 		return "./resources/SecondTheme/STOP.png";
 	}
+
+	@Override
+	public String getBackgroundImage() {
+	
+		return "./resources/SecondTheme/background.jpg";
+	}
+
+	@Override
+	public String getMusic() {
+		return "./resources/SecondTheme/MarioSong.mp3";
+	}
+
+
 }

@@ -2,14 +2,14 @@ package view;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-
 import javafx.scene.input.MouseEvent;
 import theme.ThemeDisplayer;
 import theme.ThemeMap;
+
 public class PipeDisplayer extends Canvas {
 	char[][] pipeData;
 	ThemeMap themeMap;
-	
+	ThemeDisplayer theme;
 	public PipeDisplayer() {
 		PipeDisplayer pipeDisplayer=this;
 		   this.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -32,7 +32,7 @@ public class PipeDisplayer extends Canvas {
 		this.themeMap=new ThemeMap(themeDisp);
 		redraw();
 	}
-
+	
 	public void redraw() {
 		if(pipeData!=null){
 			double W = getWidth();

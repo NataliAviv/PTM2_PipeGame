@@ -1,19 +1,30 @@
 package theme;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.HBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 public class ThemeMap {
-
+	private MediaPlayer media;
+	private String backgroundImageOn; 
 	public class ImageURL {
 		String pathURL;
 
@@ -41,7 +52,8 @@ public class ThemeMap {
 			imagesPath.put('F', new ImageURL(theme.getPipe_F()));
 			imagesPath.put('s', new ImageURL(theme.get_s()));
 			imagesPath.put('g', new ImageURL(theme.get_g()));
-			
+			this.BackgroundImage();
+			this.MusicOn();
 	}
 
 	public Image getImage(char type) {
@@ -59,22 +71,28 @@ public class ThemeMap {
 		}
 		return images.get(type);
 	}
-	public void Music() throws FileNotFoundException {
-	    MediaPlayer musicplayer; 
-	    Media mp3MusicFile = new Media(Paths.get("./resources/FistTheme/Song.mp3").toUri().toString()); 
-		musicplayer = new MediaPlayer(mp3MusicFile);
-		if(mp3MusicFile!=null) {
-			mp3MusicFile.setOnError(null);}
-   
-		musicplayer.setAutoPlay(true);
-		musicplayer.setVolume(0.9);   // from 0 to 1      
-		//***************** loop (repeat) the music  ******************
-		musicplayer.setOnEndOfMedia(new Runnable() {    
-		public void run() {
-		musicplayer.seek(Duration.ZERO); 
-         }
-		 });
+	
+	public void BackgroundImage() {
+		/* try {
+				this.backgroundImageOn = new Image(new FileInputStream(".resources/FirstTheme/Background.jpg"));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}*/
+			backgroundImageOn = theme.getBackgroundImage();//new Image(new FileInputStream(backgroundFileName.get()));
+
+		SnapshotParameters snp = new SnapshotParameters();
+		snp.setFill(Color.TRANSPARENT);
 	}
 	
+	public void MusicOn(){
+		if(media!=null){
+			media.stop();
+		}
+		String musicFile = theme.getMusic();
+		Media music = new Media(new File(musicFile).toURI().toString());
+		media = new MediaPlayer(music);
+		media.play();
+	}
+
 
 }

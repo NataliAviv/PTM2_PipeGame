@@ -1,7 +1,26 @@
 package theme;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+import javafx.scene.image.Image;
+import javafx.scene.media.Media;
 
 public class FirstTheme implements ThemeDisplayer	{
+
+	/*public Media music;
+	public Image backgroundImage;
+	
+	public FirstTheme() {
+		try {
+			this.backgroundImage = new Image(new FileInputStream("./resources/FirstTheme/Background.jpg"));
+			this.music = new Media (new File("./resources/FirstTheme/song.mp3").toURI().toString());
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}	
+	}*/
+	
 	@Override
 	public String get_Line() {
 		return "./resources/FirstTheme/-.jpg";
@@ -40,6 +59,16 @@ public class FirstTheme implements ThemeDisplayer	{
 	@Override
 	public String get_g() {
 		return "./resources/FirstTheme/marioStop.png";
+	}
+
+	@Override
+	public String getBackgroundImage() {
+		return "./resources/FirstTheme/Background.jpg";
+	}
+
+	@Override
+	public String getMusic() {
+		return "./resources/FirstTheme/song.mp3";
 	}
 	
 }
