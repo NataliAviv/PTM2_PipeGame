@@ -1,8 +1,9 @@
 package theme;
 
-
+import javafx.scene.media.MediaPlayer;
 
 public class SecondTheme implements ThemeDisplayer {
+	private MediaPlayer media;
 	/*public Media music;
 	public Image backgroundImage;
 	
@@ -64,6 +65,18 @@ public class SecondTheme implements ThemeDisplayer {
 	public String getMusic() {
 		return "./resources/SecondTheme/MarioSong.mp3";
 	}
+
+	@Override
+	public void stopMusic() {
+		if(media!=null)
+		{
+			media.stop();
+		}
+	}
+
+	
+
+
 
 
 }

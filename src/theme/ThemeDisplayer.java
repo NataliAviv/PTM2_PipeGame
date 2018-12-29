@@ -2,8 +2,6 @@ package theme;
 
 
 
-import javafx.scene.media.Media;
-
 public interface ThemeDisplayer {
 	String get_Line();
 	String get_I();
@@ -15,5 +13,5 @@ public interface ThemeDisplayer {
 	String get_g();
 	public String getBackgroundImage();
 	public String getMusic();
-	
+	public void stopMusic();
 }

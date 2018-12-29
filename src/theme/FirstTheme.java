@@ -1,16 +1,11 @@
 package theme;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
-import javafx.scene.image.Image;
-import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 public class FirstTheme implements ThemeDisplayer	{
-
-	/*public Media music;
-	public Image backgroundImage;
+private MediaPlayer media;
+	public MediaPlayer music;
+	/*public Image backgroundImage;
 	
 	public FirstTheme() {
 		try {
@@ -70,5 +65,14 @@ public class FirstTheme implements ThemeDisplayer	{
 	public String getMusic() {
 		return "./resources/FirstTheme/song.mp3";
 	}
+
+	@Override
+	public void stopMusic() {
+		if(media!=null)
+		{
+			media.stop();
+		}
+	}
+
 	
 }

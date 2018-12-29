@@ -11,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.stage.FileChooser;
 import theme.FirstTheme;
 import theme.SecondTheme;
+import theme.ThemeDisplayer;
 
 public class MainWindowsController implements Initializable {
 	char[][] pipeData = { 
@@ -47,6 +48,16 @@ public class MainWindowsController implements Initializable {
 		if (chosen != null) {
 			System.out.println(chosen.getName());
 		}
+	}
+	public void setFirstTheme()
+	{
+		ThemeDisplayer firstTheme = new FirstTheme();
+		pipeDisplayer.setPipeTheme(firstTheme);
+	}
+	public void setSecondTheme()
+	{
+		ThemeDisplayer secondTheme = new SecondTheme();
+		pipeDisplayer.setPipeTheme(secondTheme);
 	}
 	
 

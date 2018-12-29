@@ -10,6 +10,7 @@ public class PipeDisplayer extends Canvas {
 	char[][] pipeData;
 	ThemeMap themeMap;
 	ThemeDisplayer theme;
+	
 	public PipeDisplayer() {
 		PipeDisplayer pipeDisplayer=this;
 		   this.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -105,11 +106,16 @@ public class PipeDisplayer extends Canvas {
 			if (t < times - 1) {
 				try {
 					Thread.sleep(100L);
-				} catch (InterruptedException var6) {
-					;
-				}
+				} catch (InterruptedException var6) {;}
 			}
 		}
 
+	}
+	
+
+	public void setPipeTheme(ThemeDisplayer themedisp) {
+		this.theme=themedisp;
+		setPipeData(this.pipeData,themedisp);
+		
 	}
 }

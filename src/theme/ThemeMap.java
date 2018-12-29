@@ -25,6 +25,7 @@ import javafx.util.Duration;
 public class ThemeMap {
 	private MediaPlayer media;
 	private String backgroundImageOn; 
+	boolean ismuted = false;
 	public class ImageURL {
 		String pathURL;
 
@@ -54,8 +55,19 @@ public class ThemeMap {
 			imagesPath.put('g', new ImageURL(theme.get_g()));
 			this.BackgroundImage();
 			this.MusicOn();
+			
 	}
 
+	public void mute() {
+		if(!ismuted) {
+			media.setVolume(0.0);
+			ismuted = true;
+		}
+		else {
+			media.setVolume(100.0);
+			ismuted = false;
+		}
+	}
 	public Image getImage(char type) {
 		if (!images.containsKey(type)) {
 			String path = imagesPath.get(type).getPathURL();
@@ -93,6 +105,5 @@ public class ThemeMap {
 		media = new MediaPlayer(music);
 		media.play();
 	}
-
 
 }

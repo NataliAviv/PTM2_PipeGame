@@ -24,8 +24,8 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Change Theme">
             <items>
-                  <MenuItem mnemonicParsing="false" text="first" />
-              <MenuItem mnemonicParsing="false" text="second" />
+                  <MenuItem mnemonicParsing="false" onAction="#setFirstTheme" text="first" />
+              <MenuItem mnemonicParsing="false" onAction="#setSecondTheme" text="second" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
