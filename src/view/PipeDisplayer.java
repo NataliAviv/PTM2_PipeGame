@@ -8,7 +8,6 @@ import theme.ThemeMap;
 
 public class PipeDisplayer extends Canvas {
 	char[][] pipeData;
-	ThemeMap themeMap;
 	ThemeDisplayer theme;
 	
 	public PipeDisplayer() {
@@ -30,7 +29,7 @@ public class PipeDisplayer extends Canvas {
 
 	public void setPipeData(char[][] pipeData, ThemeDisplayer themeDisp) {
 		this.pipeData = pipeData;
-		this.themeMap=new ThemeMap(themeDisp);
+		ThemeMap.getInstance().setTheme(themeDisp);
 		redraw();
 	}
 	
@@ -45,7 +44,7 @@ public class PipeDisplayer extends Canvas {
 			for(int i=0;i<pipeData.length;i++)
 				for(int j=0;j<pipeData[i].length;j++){
 					if(pipeData[i][j]!=' ')
-						gc.drawImage(themeMap.getImage(pipeData[i][j]), j*w, i*h, w, h);
+						gc.drawImage(ThemeMap.getInstance().getImage(pipeData[i][j]), j*w, i*h, w, h);
 				}
 		}
 	}
@@ -102,6 +101,7 @@ public class PipeDisplayer extends Canvas {
 				this.pipeData[i][j] = '-';
 			}
 
+			//viewModel changecell
 			this.redraw();
 			if (t < times - 1) {
 				try {

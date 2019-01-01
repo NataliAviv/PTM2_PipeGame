@@ -30,8 +30,7 @@ public class MainWindowsController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) 
 	{
-		
-		pipeDisplayer.setPipeData(pipeData,new FirstTheme());
+				pipeDisplayer.setPipeData(pipeData,new FirstTheme());
 		
 	}
 
@@ -42,7 +41,7 @@ public class MainWindowsController implements Initializable {
 	public void openFile() {
 		FileChooser fc = new FileChooser();
 		fc.setTitle("open pipe file");
-		fc.setInitialDirectory(new File("./Images"));
+		fc.setInitialDirectory(new File("./resources"));
 		fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Prawn XML files", "*.xml"));
 		File chosen = fc.showOpenDialog(null);
 		if (chosen != null) {
