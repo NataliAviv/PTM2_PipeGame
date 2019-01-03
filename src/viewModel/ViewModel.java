@@ -1,6 +1,9 @@
 package viewModel;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -21,32 +24,24 @@ public class ViewModel implements IViewModel {
 	private TimerTask task;
 
 	public ViewModel(ModelPg modelpg) {
-		super();
-		this.setModelpg(modelpg);
+		this.modelpg=modelpg;
 		this.pgboard = new SimpleListProperty<>();
-		this.pgboard.bind(modelpg.getPgboard());
-		this.isGoal = new SimpleBooleanProperty();
-		this.isGoal.bind(modelpg.win);
+		this.pgboard.bind(modelpg.pgboard);
+		/*this.isGoal = new SimpleBooleanProperty();
+		this.isGoal.bind(modelpg.win);*/
 	}
 
-	@Override
-	public void changeCells(int i, int j) {
-		this.modelpg.changeCells(i, j);
+	public void switchCell(int j, int i) {
+		this.modelpg.switchCell(j, i);
 	}
 
-	@Override
-	public void load(String boardPath) {
-		this.modelpg.load(boardPath);
+	
 
-	}
-
-	@Override
-	public void save(File boardPath) {
-		this.modelpg.save(boardPath);
+	public boolean save() throws IOException  {
+	return this.modelpg.save();
 
 	}
 
-	@Override
 	public void solve() {
 		this.modelpg.solve();
 
@@ -95,6 +90,11 @@ public class ViewModel implements IViewModel {
 			task.cancel();
 			timer.cancel();
 		}
+	}
+
+ 
+	public void load(File file) {
+		this.modelpg.load(file);
 	}
 	
 	//numberof step

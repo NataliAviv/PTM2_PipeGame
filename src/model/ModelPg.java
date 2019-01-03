@@ -1,13 +1,18 @@
 package model;
 
-import java.io.BufferedReader;
+
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileNotFoundException;
+
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Observable;
+import java.util.Scanner;
 
 import client.SolverClient;
 import javafx.beans.property.BooleanProperty;
@@ -19,76 +24,72 @@ import javafx.collections.FXCollections;
 public class ModelPg extends Observable implements IModel {
 
 	private SolverClient m_solver;
-	private ListProperty<char[]> pgboard;
+	public ListProperty<char[]> pgboard;
 	public BooleanProperty win;
 	public String host;
 	public int port;
-	public ModelPg(SolverClient solver)
+	
+	public ModelPg()
 	{
-		m_solver = solver;
+		m_solver = new SolverClient(port, host);
 		m_solver.addObserver(this);
 		this.pgboard = new SimpleListProperty<>(FXCollections.observableArrayList(new ArrayList<>()));
-		// initializeBoard();
+		UpdateBoard();
 		this.port = 6400;
 		this.host = "localhost";
 		this.win = new SimpleBooleanProperty();
 	}
 
-	char[][] pipeData = { { 's', '-', '7', ' ' }, { ' ', '|', 'L', '7' }, { '-', 'F', ' ', '|' },
-			{ '7', 'F', '-', 'J' }, { ' ', 'g', ' ', '-' } };
+	
 
-	public void changeCells(int i, int j) {
-		switch (this.pipeData[i][j]) {
+	public void switchCell(int j, int i) {
+		switch (this.pgboard.get(i)[j]) {
 		case '-':
-			this.pipeData[i][j] = '|';
+			this.pgboard.get(i)[j] = '|';
 			break;
 		case '7':
-			this.pipeData[i][j] = 'J';
+			this.pgboard.get(i)[j] = 'J';
 			break;
 		case 'F':
-			this.pipeData[i][j] = '7';
+			this.pgboard.get(i)[j] = '7';
 			break;
 		case 'J':
-			this.pipeData[i][j] = 'L';
+			this.pgboard.get(i)[j] = 'L';
 			break;
 		case 'L':
-			this.pipeData[i][j] = 'F';
+			this.pgboard.get(i)[j] = 'F';
 			break;
 		case '|':
-			this.pipeData[i][j] = '-';
+			this.pgboard.get(i)[j] = '-';
+			break;
 		}
 	}
-
-	public void load(String boardPath) {
-		 List<char[]> PgBoardBuilder = new ArrayList<char[]>();
-	        BufferedReader reader;
-	        try {
-
-	        reader = new BufferedReader(new FileReader(boardPath));
-	        String line;
-	        while ((line = reader.readLine()) != null)
-	        	PgBoardBuilder.add(line.toCharArray());
-	        this.pgboard.setAll(PgBoardBuilder.toArray(new char[PgBoardBuilder.size()][]));
-	        reader.close();
-	        }catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	        
-		this.setChanged();
-		this.notifyObservers();
+	public void load(File level) {
+		Scanner scan=null;
+		try {
+			 scan=new Scanner(level);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(!scan.equals(null)) {
+			this.pgboard.clear();
+		}
+		while (scan.hasNext()){
+			char[] line=null;
+			String str = scan.nextLine();	
+			line = str.toCharArray();
+			System.out.println(line);
+			this.pgboard.add(line);
+		}
+		scan.close();
+		
 	}
 
 
 	public void solve() {
-		String str = "";
-		for (int i = 0; i < pgboard.getSize(); i++) {
-			str += new String(pgboard.getValue().get(i));
-			str += '\n';
-		}
-		str += "done" + '\n';
 		try {
-			m_solver.solve(str);
+			m_solver.solve(this.host, this.port, pgboard);
 		} catch (Exception e) {
 			
 			e.printStackTrace();
@@ -96,9 +97,11 @@ public class ModelPg extends Observable implements IModel {
 
 	}
 
-	public void UpdateBoard(List<String> solution) {
-		// TODO Auto-generated method stub
-
+	public void UpdateBoard() {
+		this.pgboard.add("s-|7-".toCharArray());
+		this.pgboard.add("|-J--".toCharArray());
+		this.pgboard.add("|7--L".toCharArray());
+		this.pgboard.add("|L-Fg".toCharArray());
 	}
 
 	@Override
@@ -106,7 +109,7 @@ public class ModelPg extends Observable implements IModel {
 
 		List<String> solution = (List<String>) arg1;
 
-		UpdateBoard(solution);
+		UpdateBoard();
 
 		this.setChanged();
 		this.notifyObservers();
@@ -133,21 +136,30 @@ public class ModelPg extends Observable implements IModel {
 		return false;
 	}
 
-	public void save(File file) {
-		try {
-			PrintWriter write = new PrintWriter(file);
-			for (int i = 0; i < this.pgboard.size(); i++) 
-				write.println(new String(this.pgboard.get(i)));
-			
-			//write.println("time:" + time.get());
-			//write.println("step:" + numSteps.get());
-			write.flush();
-			write.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+	public boolean save() throws IOException {
+        // Get a Calendar and set it to the current time.
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(Date.from(Instant.now()));
+        // Create a filename from a format string.
+        String result = String.format("pg-%1$tY-%1$tm-%1$td-%1$tk-%1$tS-%1$tp.txt", cal);
+		File file = new File("./resources/levels/" + result + ".txt");
+		{
+		System.out.println("Created New File To Save To");
+		PrintWriter pr = new PrintWriter(file);
+		String s;
+		for (int i = 0; i < this.pgboard.getSize() - 1; i++) {
+			s = new String(this.pgboard.get(i));
+			pr.println(s);
 		}
+		pr.close();
+		System.out.println("The level saved in levels folder");
+		}
+		if(file.exists())
+			return true;
+		else
+			return false;
 	}
+}
 	
 
-}

@@ -90,6 +90,8 @@ public class ThemeMap {
 	}
 	public Image getImage(char type) {
 		if (!images.containsKey(type)) {
+			System.out.println("ghhg");
+			System.out.println(type);
 			String path = imagesPath.get(type).getPathURL();
 			System.out.println(path);
 			Image a = null;

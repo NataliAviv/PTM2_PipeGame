@@ -1,50 +1,45 @@
 package view;
-import javafx.event.EventHandler;
+
+import java.util.List;
+
+import javafx.beans.property.ListProperty;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.MouseEvent;
+
 import theme.ThemeDisplayer;
 import theme.ThemeMap;
 
 public class PipeDisplayer extends Canvas {
-	char[][] pipeData;
+	private List<char[]> pgboard;
 	ThemeDisplayer theme;
+	double w,h;
 	
-	public PipeDisplayer() {
-		PipeDisplayer pipeDisplayer=this;
-		   this.setOnMouseClicked(new EventHandler<MouseEvent>() {
-		
-		  @Override public void handle(MouseEvent event) { 
-			  double H =pipeDisplayer.getHeight();
-			  double W = pipeDisplayer.getWidth();
-		  int h =(int)((double)H / (double)pipeData.length); 
-		  int w = (int)((double)W /(double)pipeData[0].length);
-		  int mx = (int) event.getX();
-		  int my = (int) event.getY();
-		  int i = my / h; 
-		  int j = mx / w;
-		  pipeDisplayer.switchCell(i, j, 1);
-		  } });
+	public void setPipeData(List<char[]> pgboard, ThemeDisplayer themeDisp) {
+//		this.pgboard = pgboard;
+//		ThemeMap.getInstance().setTheme(themeDisp);
+		setPipeTheme(themeDisp);
+		setpipeboard(pgboard);
 	}
-
-	public void setPipeData(char[][] pipeData, ThemeDisplayer themeDisp) {
-		this.pipeData = pipeData;
-		ThemeMap.getInstance().setTheme(themeDisp);
+	
+	public void setpipeboard(List<char[]> pgboard) {
+		this.pgboard=pgboard;
 		redraw();
 	}
 	
 	public void redraw() {
-		if(pipeData!=null){
+		if(pgboard!=null){
+			//size of canvas
 			double W = getWidth();
 			double H = getHeight();
-			double w = W/pipeData[0].length;
-			double h = H/pipeData.length;
+			//size of small square
+			w = W/pgboard.get(0).length;
+			h = H/pgboard.size();
 			GraphicsContext gc=getGraphicsContext2D();
 			gc.clearRect(0, 0, W, H);
-			for(int i=0;i<pipeData.length;i++)
-				for(int j=0;j<pipeData[i].length;j++){
-					if(pipeData[i][j]!=' ')
-						gc.drawImage(ThemeMap.getInstance().getImage(pipeData[i][j]), j*w, i*h, w, h);
+			for(int i=0;i<pgboard.size();i++)
+				for(int j=0;j<pgboard.get(i).length;j++){
+					if(pgboard.get(i)[j]!=' ')
+						gc.drawImage(ThemeMap.getInstance().getImage(pgboard.get(i)[j]), j*w, i*h, w, h);
 				}
 		}
 	}
@@ -79,8 +74,10 @@ public class PipeDisplayer extends Canvas {
 	public double maxWidth(double height) {
 		return 10000;
 	}
+	
 	public void switchCell(int i, int j, int times) {
-		for (int t = 0; t < times; ++t) {
+		
+		for (int t = 0; t < times; ++t) {/*
 			switch (this.pipeData[i][j]) {
 			case '-':
 				this.pipeData[i][j] = '|';
@@ -100,7 +97,7 @@ public class PipeDisplayer extends Canvas {
 			case '|':
 				this.pipeData[i][j] = '-';
 			}
-
+*/
 			//viewModel changecell
 			this.redraw();
 			if (t < times - 1) {
@@ -114,8 +111,17 @@ public class PipeDisplayer extends Canvas {
 	
 
 	public void setPipeTheme(ThemeDisplayer themedisp) {
-		this.theme=themedisp;
-		setPipeData(this.pipeData,themedisp);
+		ThemeMap.getInstance().setTheme(themedisp);
+		/*this.theme=themedisp;*/
+		/*setPipeData(this.pgboard,themedisp);*/
 		
+	}
+	
+	
+	public double getW() {
+		return w;
+	}
+	public double getH() {
+		return h;
 	}
 }
