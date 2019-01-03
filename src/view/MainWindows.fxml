@@ -52,8 +52,7 @@
 	<left>
 		<VBox spacing="5.0" BorderPane.alignment="CENTER">
 			<children>
-				<Button mnemonicParsing="false" onAction="#start"
-					text="start" />
+				<Button mnemonicParsing="false" onAction="#start" text="start" />
 				<Button mnemonicParsing="false" text="solve" />
 			</children>
 			<BorderPane.margin>
