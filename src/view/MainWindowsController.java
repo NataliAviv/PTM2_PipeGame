@@ -77,8 +77,8 @@ public class MainWindowsController implements Initializable {
                 System.out.println(H);
                 double W = pipeDisplayer.getW();
                 System.out.println(W);
-                int i = (int) (event.getX() / W);
-                int j = (int) (event.getY() / H);
+                int j = (int) (event.getX() / W);
+                int i = (int) (event.getY() / H);
 				System.out.println(i+" "+j);
 				viewmodel.switchCell(i, j);
 				pipeDisplayer.setpipeboard(pgboard);
