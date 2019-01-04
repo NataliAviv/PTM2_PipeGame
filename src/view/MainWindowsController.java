@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -65,7 +63,7 @@ public class MainWindowsController implements Initializable {
 		viewmodel.countStep.addListener((observable, oldValue, newValue)->countStep.setText(Integer.toString(viewmodel.countStep.get())));
 	}
 
-    public void MoushClick() {
+    public void MouseClick() {
         pipeDisplayer.addEventFilter(MouseEvent.MOUSE_CLICKED, (e) -> {
             pipeDisplayer.requestFocus();
         });
@@ -83,6 +81,10 @@ public class MainWindowsController implements Initializable {
 				viewmodel.switchCell(i, j);
 				viewmodel.countStep.set(viewmodel.countStep.get() + 1);
 				pipeDisplayer.setpipeboard(pgboard);
+				if (viewmodel.isGoal()) {
+                    System.out.println("YOU WON!!!");
+                    wonMessage();
+                }
 			}
 		});
 
@@ -95,7 +97,7 @@ public class MainWindowsController implements Initializable {
 		//timer.setText("0");
 		pipeDisplayer.setDisable(true);
         pipeDisplayer.setPipeData(pgboard, new FirstTheme());
-        MoushClick();
+        MouseClick();
     }
 
     public void start() {

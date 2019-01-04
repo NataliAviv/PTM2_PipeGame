@@ -40,7 +40,9 @@ public class ViewModel implements IViewModel {
 		this.modelpg.switchCell(i, j);
 	}
 
-	
+	public boolean isGoal() {
+		return this.modelpg.isGoal();
+	}
 
 	public boolean save() throws IOException  {
 	return this.modelpg.save();

@@ -102,10 +102,163 @@ public class ModelPg extends Observable implements IModel {
 
 	}
 
+	public char[][] pbBoardToPaddedArray() {
+		int length = pgboard.getSize() + 2;
+		char[][] target = new char[length][pgboard.get(0).length + 2];
+		for (int i = 0; i < pgboard.getSize(); i++) {
+			System.arraycopy(pgboard.get(i), 0, target[i + 1], 1, pgboard.get(0).length);
+		}
+		return target;
+	}
+
+	public boolean isGoal() {
+		int s_row = 0, s_col = 0;
+		char[][] padded_state = pbBoardToPaddedArray();
+
+		// search for 's'
+		for (int i = 0; i < padded_state.length; i++) {
+			for (int j = 0; j < padded_state[i].length; j++) {
+				if (padded_state[i][j] == 's') {
+					s_row = i;
+					s_col = j;
+					break;
+				}
+			}
+		}
+
+		// "walk" in each possible direction and return if reached 'g'
+		return (
+				checkIfGoalInDirection(padded_state, s_row + 1, s_col, 0) || // down
+				checkIfGoalInDirection(padded_state, s_row, s_col + 1, 1) || // right
+				checkIfGoalInDirection(padded_state, s_row - 1, s_col, 2) || // up
+				checkIfGoalInDirection(padded_state, s_row, s_col - 1, 3) // left
+		);
+	}
+
+	public boolean checkIfGoalInDirection(char[][] state, int row, int col, int dir) {
+
+		if (state[row][col] == 'g') {
+			return true;
+		}
+
+		switch (state[row][col]) {
+			case '|': {
+				switch (dir)
+				{
+					case 0:
+					{
+						return checkIfGoalInDirection(state, row + 1, col, 0);
+					}
+					case 2:
+					{
+						return checkIfGoalInDirection(state, row - 1, col, 2);
+					}
+					case 1:
+					case 3:
+					{
+						return false;
+					}
+				}
+			}
+			case '-': {
+				switch (dir)
+				{
+					case 1:
+					{
+						return checkIfGoalInDirection(state, row, col + 1, 1);
+					}
+					case 3:
+					{
+						return checkIfGoalInDirection(state, row, col - 1, 3);
+					}
+					case 0:
+					case 2:
+					{
+						return false;
+					}
+				}
+			}
+			case '7': {
+				switch (dir)
+				{
+					case 1:
+					{
+						return checkIfGoalInDirection(state, row + 1, col, 0);
+					}
+					case 2:
+					{
+						return checkIfGoalInDirection(state, row, col - 1, 3);
+					}
+					case 0:
+					case 3:
+					{
+						return false;
+					}
+				}
+			}
+			case 'J': {
+				switch (dir)
+				{
+					case 1:
+					{
+						return checkIfGoalInDirection(state, row - 1, col, 2);
+					}
+					case 0:
+					{
+						return checkIfGoalInDirection(state, row, col - 1, 3);
+					}
+					case 2:
+					case 3:
+					{
+						return false;
+					}
+				}
+			}
+			case 'F': {
+				switch (dir)
+				{
+					case 2:
+					{
+						return checkIfGoalInDirection(state, row, col + 1, 1);
+					}
+					case 3:
+					{
+						return checkIfGoalInDirection(state, row + 1, col, 0);
+					}
+					case 0:
+					case 1:
+					{
+						return false;
+					}
+				}
+			}
+			case 'L': {
+
+				switch (dir)
+				{
+					case 3:
+					{
+						return checkIfGoalInDirection(state, row - 1, col, 2);
+					}
+					case 0:
+					{
+						return checkIfGoalInDirection(state, row, col + 1, 1);
+					}
+					case 2:
+					case 1:
+					{
+						return false;
+					}
+				}
+			}
+			default:
+				return false;
+
+		}
+	}
 
 	public List<String> solve() {
 
-//		Thread th = new Thread(() -> {
 		List<String> solution = new ArrayList<>();
 			try {
 				Socket theServer = new Socket(host, port);
@@ -132,9 +285,6 @@ public class ModelPg extends Observable implements IModel {
 				e.printStackTrace();
 			}
 			return solution;
-//		});
-//
-//		th.start();
 	}
 
 	public void UpdateBoard() {
