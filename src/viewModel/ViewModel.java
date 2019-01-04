@@ -1,15 +1,14 @@
 package viewModel;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.StringProperty;
 import model.ModelPg;
@@ -22,11 +21,16 @@ public class ViewModel implements IViewModel {
 	public StringProperty timeLeft;
 	private Timer timer;
 	private TimerTask task;
+	public IntegerProperty countStep=new SimpleIntegerProperty();
+	//public IntegerProperty timer=new SimpleIntegerProperty();
+	
 
 	public ViewModel(ModelPg modelpg) {
 		this.modelpg=modelpg;
 		this.pgboard = new SimpleListProperty<>();
 		this.pgboard.bind(modelpg.pgboard);
+		this.countStep.bind(modelpg.countStep);
+		//this.timer.bind(modelpg.timer);
 		/*this.isGoal = new SimpleBooleanProperty();
 		this.isGoal.bind(modelpg.win);*/
 	}
@@ -43,7 +47,7 @@ public class ViewModel implements IViewModel {
 	}
 
 	public void solve() {
-		this.modelpg.solve();
+	//	this.modelpg.solve();
 
 	}
 	public void setPort(int port) {
@@ -54,9 +58,6 @@ public class ViewModel implements IViewModel {
 		this.modelpg.setHost(host);
 	}
 
-	public void win() {
-		this.modelpg.win.set(this.modelpg.isGoalState());
-	}
 
 	public ModelPg getModelpg() {
 		return modelpg;
@@ -66,37 +67,13 @@ public class ViewModel implements IViewModel {
 		this.modelpg = modelpg;
 	}
 
-	public void startTimer() {
-		stopTimer();
-		timer = new Timer();
-		timeLeft.setValue("10");
-		task = new TimerTask() {
-			@Override
-			public void run() {
-				timeLeft.set(String.valueOf(Integer.valueOf(timeLeft.get()) - 1));
-				if (Integer.valueOf(timeLeft.get()) <= 0) {
-					//currentWindow.setValue("overView");
-					stopTimer();
-				}
-			}
-		};
-		timer.scheduleAtFixedRate(task, 0, 1000);
-	}
-
-	private void stopTimer() {
-		if (timer != null) {
-			modelpg.win.setValue(false);
-			timeLeft.setValue("0");
-			task.cancel();
-			timer.cancel();
-		}
-	}
-
- 
 	public void load(File file) {
 		this.modelpg.load(file);
 	}
 	
-	//numberof step
-
+	public boolean finish()throws IOException, InterruptedException
+	{
+		return this.modelpg.finishGame();
+	}
+	
 }

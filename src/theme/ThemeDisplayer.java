@@ -1,7 +1,5 @@
 package theme;
 
-
-
 public interface ThemeDisplayer {
 	String get_Line();
 	String get_I();

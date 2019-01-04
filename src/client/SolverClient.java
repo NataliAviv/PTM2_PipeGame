@@ -8,13 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.concurrent.locks.ReentrantLock;
+
+import model.IModel;
+
 import java.io.StringReader;
 
 public class SolverClient extends Observable {
 	int m_port;
 	String m_host;
 	ReentrantLock solverLock;
-
+	ArrayList<String> list;
 	public SolverClient(int port, String host) {
 
 		m_port = port;
@@ -24,7 +27,7 @@ public class SolverClient extends Observable {
 
 	public void solve(String host, int port, List<char[]> pgboard) throws Exception {
 
-		/*Thread th = new Thread(() -> {
+		Thread th = new Thread(() -> {
 			try {
 //				Socket theServer = new Socket(m_host, m_port);
 //				//System.out.println("Connected to server");
@@ -55,13 +58,12 @@ public class SolverClient extends Observable {
 //				this.notifyObservers(solution);
 //				this.setChanged();
 //				solverLock.unlock();
-//				
-
+				list = new ArrayList<>();
 				Socket theServer = new Socket(host, port);
 				PrintWriter out = new PrintWriter(theServer.getOutputStream());
 
-				for (int i = 0; i < board.length; ++i) {
-					out.println(new String(board[i]));
+				for (int i = 0; i < pgboard.size(); ++i) {
+					out.println(new String(pgboard.get(i)));
 				}
 
 				out.println("done");
@@ -73,7 +75,7 @@ public class SolverClient extends Observable {
 					int i = Integer.parseInt(line.split(",")[0]);
 					int j = Integer.parseInt(line.split(",")[1]);
 					int times = Integer.parseInt(line.split(",")[2]);
-					// board.switchCell(i, j, times);
+					//list.switchCell(i, j, times);
 				}
 
 				in.close();
@@ -85,7 +87,8 @@ public class SolverClient extends Observable {
 			}
 		});
 
-		th.start();*/
+		th.start();
 	}
 
+	
 }

@@ -10,6 +10,8 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.fxml.FXMLLoader;
 
 
@@ -21,6 +23,7 @@ public class Main extends Application {
 			BackgroundSize bgSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true);
 			root.setBackground(new Background(new BackgroundImage(new Image("file:Resources/imagebackground.jpg"), BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, bgSize)));
 			Scene scene = new Scene(root,800,800);
+			primaryStage.setTitle("Pipe Game"); 
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();

@@ -1,10 +1,16 @@
 package theme;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import javafx.scene.media.MediaPlayer;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
 public class FirstTheme implements ThemeDisplayer	{
-private MediaPlayer media;
-	public MediaPlayer music;
+	public MediaPlayer media;
+	//boolean ismuted = false;
 	/*public Image backgroundImage;
 	
 	public FirstTheme() {
@@ -72,6 +78,7 @@ private MediaPlayer media;
 		{
 			media.stop();
 		}
+		
 	}
 
 	

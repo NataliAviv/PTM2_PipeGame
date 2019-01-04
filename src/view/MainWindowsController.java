@@ -4,18 +4,33 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.text.Text;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
+import javafx.util.Pair;
 import model.ModelPg;
 import theme.FirstTheme;
 import theme.SecondTheme;
@@ -25,21 +40,27 @@ import viewModel.ViewModel;
 public class MainWindowsController implements Initializable {
 	@FXML
 	PipeDisplayer pipeDisplayer;
-
-
-	public StringProperty timeLeft;
-	public StringProperty currentWindow;
+	@FXML
+	Label countStep;
+	@FXML
+	Label TimerLabel;
+	
 	ViewModel viewmodel;
 	private ListProperty<char[]> pgboard;
 	ModelPg modelpg;
 	ThemeDisplayer theme;
-	int buttonClicked = 0;
+	private DoubleProperty timeSeconds= new SimpleDoubleProperty(0);
+	private StringProperty timeLeft;
+	private TimerTask task;
+	private Timer timer;
+	private double timeleft=0;
 	
 	public MainWindowsController() {
 		modelpg = new ModelPg();
 		viewmodel = new ViewModel(modelpg);
 		this.pgboard = new SimpleListProperty<>();
 		this.pgboard.bind(viewmodel.pgboard);
+		viewmodel.countStep.addListener((observable, oldValue, newValue)->countStep.setText(Integer.toString(viewmodel.countStep.get())));
 	}
 
 	public void MoushClick() {
@@ -59,28 +80,33 @@ public class MainWindowsController implements Initializable {
 				pipeDisplayer.setpipeboard(pgboard);
 			}
 		});
-	}/*
-	public void countMouseClick()
-	{
-		objButton1.addActionListener(new ActionListener() {
+		 
+	}
 
-		    public void actionPerformed(ActionEvent e)
-		    {
-		       buttonClicked++;
-		       System.out.println(buttonClicked);
-		    }
-		}); 
-	}*/
-    
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		countStep.setText("0");
+		//timer.setText("0");
+		pipeDisplayer.setDisable(true);
 		pipeDisplayer.setPipeData(pgboard, new FirstTheme());
 		MoushClick();
 	}
 
 	public void start() {
-		System.out.println("start the game!\n");
+		pipeDisplayer.setDisable(false);
+			 System.out.println("start the game!\n");
+			 startTimer();
+			
 	}
+		public void stopTheGame() throws IOException
+		{
+			stopTimer();
+			//theme.stopMusic();
+			System.out.println("stop the game!\n");
+			 
+		}
+
 
 	public void openFile() throws IOException {
 		FileChooser fc = new FileChooser();
@@ -94,7 +120,39 @@ public class MainWindowsController implements Initializable {
 			pipeDisplayer.redraw();
 		}
 	}
+	
+	public void startTimer()  {
+	    TimerLabel.textProperty().bind(timeSeconds.asString());
+		timer = new Timer(true);
+		task = new TimerTask(){
+			@Override
+			public void run() {
+				timeleft+=0.1;
+				Platform.runLater(new Runnable() {
+					public void run() {timeSeconds.set(Double.parseDouble(String.format ("%,.2f", timeleft)));}
+				});
+			}
+		};
+	
+		timer.scheduleAtFixedRate(task, 0, 100);
 
+	}
+
+	
+	public void resetTimer()
+	{
+		timeleft=0;
+	}
+	
+	public void stopTimer()
+	{
+		timer.cancel();
+	}
+	
+	public Double saveTimer()
+	{
+		return timeleft;
+	}
 	public void setFirstTheme() {
 		ThemeDisplayer firstTheme = new FirstTheme();
 		pipeDisplayer.setPipeTheme(firstTheme);
@@ -111,12 +169,36 @@ public class MainWindowsController implements Initializable {
 		} else
 			wonMessage();
 	}
+	
+	
+	public void solve() throws UnknownHostException, IOException{
+		ArrayList<String> solution = new ArrayList<>();
+		this.viewmodel.solve();
+		for(int i=0;i<solution.size();i++){
 
+		}
+	}
+	/*
+	public boolean wonTheGame() throws IOException, InterruptedException {
+		if(viewmodel.finish()==true)
+		{
+			
+		}
+	}*/
+	
+	//alert for the player, won,lose,save game
 	public void wonMessage() {
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("Congratulations");
+		alert.setTitle("Well Done");
 		alert.setHeaderText(null);
-		alert.setContentText("You Won!");
+		alert.setContentText("You Won! :)");
+		alert.showAndWait();
+	}
+	public void LossMessage() {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Sorry you loss");
+		alert.setHeaderText(null);
+		alert.setContentText("You loss :( ");
 		alert.showAndWait();
 	}
 
@@ -134,13 +216,44 @@ public class MainWindowsController implements Initializable {
 		alert.setContentText("Game error");
 		alert.showAndWait();
 	}
-	
-	public void settings() throws FileNotFoundException {
-			modelpg.setHost("localhost");
-			modelpg.setPort(6400);
+	//a dialog function with the player
+	//configuration Window show the port and the ip
+	public void configurationWindow() throws FileNotFoundException {
+			Dialog<Pair<String, String>> dialog = new Dialog<>();
+			ButtonType saveButtonType = new ButtonType("save", ButtonData.OK_DONE);
+			dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+			GridPane grid = new GridPane();
+			TextField port = new TextField();
+			port.setPromptText(String.valueOf(modelpg.port));
+			TextField ip = new TextField();
+			ip.setPromptText(modelpg.host);
+			grid.add(new Label("ip:"), 0, 1);
+			grid.add(ip, 1, 1);
+			grid.add(new Label("Port number:"), 0, 0);
+			grid.add(port, 1, 0);
+			Node loginButton = dialog.getDialogPane().lookupButton(saveButtonType);
+			loginButton.setDisable(true);
+			port.textProperty().addListener((observable, oldValue, newValue) -> {
+				loginButton.setDisable(newValue.trim().isEmpty());
+			});
+
+			dialog.getDialogPane().setContent(grid);
+			Platform.runLater(() -> port.requestFocus());
+			dialog.setResultConverter(dialogButton -> {
+				if (dialogButton == saveButtonType) {
+					return new Pair<>(port.getText(), ip.getText());
+				}
+				return null;
+			});
+
+			Optional<Pair<String, String>> result = dialog.showAndWait();
+			if(result.isPresent()) {
+				String resultPort = result.get().getKey();
+				String resultIp = result.get().getValue();
+				modelpg.setPort(Integer.parseInt(resultPort));
+				modelpg.setHost(resultIp);
+			}
+
 		}
 
-    
-
-	
 }
