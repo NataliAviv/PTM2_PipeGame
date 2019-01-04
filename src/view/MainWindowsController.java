@@ -147,7 +147,7 @@ public class MainWindowsController implements Initializable {
     public void openFile() throws IOException {
         FileChooser fc = new FileChooser();
         fc.setTitle("open saved level");
-        fc.setInitialDirectory(new File("./resources"));
+        fc.setInitialDirectory(new File("./resources/levels/"));
         File chosen = fc.showOpenDialog(null);
         if (chosen != null) {
 
@@ -206,13 +206,7 @@ public class MainWindowsController implements Initializable {
             wonMessage();
     }
 
-	/*
-	public boolean wonTheGame() throws IOException, InterruptedException {
-		if(viewmodel.finish()==true)
-		{
 
-		}
-	}*/
 
     //alert for the player, won,lose,save game
     public void wonMessage() {
