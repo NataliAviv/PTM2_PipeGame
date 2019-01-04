@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -12,6 +13,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
+
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -42,9 +44,9 @@ public class MainWindowsController implements Initializable {
 	PipeDisplayer pipeDisplayer;
 	@FXML
 	Label countStep;
-	@FXML
-	Label TimerLabel;
-	
+    @FXML
+    Label TimerLabel;
+
 	ViewModel viewmodel;
 	private ListProperty<char[]> pgboard;
 	ModelPg modelpg;
@@ -54,7 +56,7 @@ public class MainWindowsController implements Initializable {
 	private TimerTask task;
 	private Timer timer;
 	private double timeleft=0;
-	
+
 	public MainWindowsController() {
 		modelpg = new ModelPg();
 		viewmodel = new ViewModel(modelpg);
@@ -63,64 +65,92 @@ public class MainWindowsController implements Initializable {
 		viewmodel.countStep.addListener((observable, oldValue, newValue)->countStep.setText(Integer.toString(viewmodel.countStep.get())));
 	}
 
-	public void MoushClick() {
-		pipeDisplayer.addEventFilter(MouseEvent.MOUSE_CLICKED, (e) -> {pipeDisplayer.requestFocus();});
-		pipeDisplayer.setOnMouseClicked(new EventHandler<MouseEvent>() {
+    public void MoushClick() {
+        pipeDisplayer.addEventFilter(MouseEvent.MOUSE_CLICKED, (e) -> {
+            pipeDisplayer.requestFocus();
+        });
+        pipeDisplayer.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
-			@Override
-			public void handle(MouseEvent event) {
-				double H = pipeDisplayer.getH();
-				System.out.println(H);
-				double W = pipeDisplayer.getW();
-				System.out.println(W);
-				int i = (int) (event.getX() / W);
-				int j = (int) (event.getY() / H);
+            @Override
+            public void handle(MouseEvent event) {
+                double H = pipeDisplayer.getH();
+                System.out.println(H);
+                double W = pipeDisplayer.getW();
+                System.out.println(W);
+                int i = (int) (event.getX() / W);
+                int j = (int) (event.getY() / H);
 				System.out.println(i+" "+j);
 				viewmodel.switchCell(i, j);
 				pipeDisplayer.setpipeboard(pgboard);
 			}
 		});
-		 
+
 	}
 
-	
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		countStep.setText("0");
 		//timer.setText("0");
 		pipeDisplayer.setDisable(true);
-		pipeDisplayer.setPipeData(pgboard, new FirstTheme());
-		MoushClick();
-	}
+        pipeDisplayer.setPipeData(pgboard, new FirstTheme());
+        MoushClick();
+    }
 
-	public void start() {
-		pipeDisplayer.setDisable(false);
+    public void start() {
+        pipeDisplayer.setDisable(false);
 			 System.out.println("start the game!\n");
 			 startTimer();
-			
+
 	}
 		public void stopTheGame() throws IOException
 		{
 			stopTimer();
 			//theme.stopMusic();
 			System.out.println("stop the game!\n");
-			 
+
 		}
 
+    public void solve() {
+        List<String> sol =  this.viewmodel.solve();
 
-	public void openFile() throws IOException {
-		FileChooser fc = new FileChooser();
-		fc.setTitle("open saved level");
-		fc.setInitialDirectory(new File("./resources"));
-		File chosen = fc.showOpenDialog(null);
-		if (chosen != null) {
+        Thread th = new Thread(() -> {
 
-			System.out.println(chosen.getName());
-			viewmodel.load(chosen);
-			pipeDisplayer.redraw();
-		}
-	}
-	
+            try {
+                System.out.println("Solution:");
+                for (int k = 0; k < sol.size(); k++) {
+                    String line = sol.get(k);
+                    int i = Integer.parseInt(line.split(",")[0]);
+                    int j = Integer.parseInt(line.split(",")[1]);
+                    int times = Integer.parseInt(line.split(",")[2]);
+                    System.out.println(line);
+                    for (int w = 0; w < times; w++) {
+                        viewmodel.switchCell(i, j);
+                    }
+                    pipeDisplayer.setpipeboard(pgboard);
+                    Thread.sleep(100);
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        th.start();
+    }
+
+    public void openFile() throws IOException {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("open saved level");
+        fc.setInitialDirectory(new File("./resources"));
+        File chosen = fc.showOpenDialog(null);
+        if (chosen != null) {
+
+            System.out.println(chosen.getName());
+            viewmodel.load(chosen);
+            pipeDisplayer.redraw();
+        }
+    }
+
 	public void startTimer()  {
 	    TimerLabel.textProperty().bind(timeSeconds.asString());
 		timer = new Timer(true);
@@ -133,22 +163,22 @@ public class MainWindowsController implements Initializable {
 				});
 			}
 		};
-	
+
 		timer.scheduleAtFixedRate(task, 0, 100);
 
-	}
+    }
 
-	
+
 	public void resetTimer()
 	{
 		timeleft=0;
 	}
-	
+
 	public void stopTimer()
 	{
 		timer.cancel();
 	}
-	
+
 	public Double saveTimer()
 	{
 		return timeleft;
@@ -163,29 +193,21 @@ public class MainWindowsController implements Initializable {
 		pipeDisplayer.setPipeTheme(secondTheme);
 	}
 
-	public void save() throws IOException {
-		if (viewmodel.save()) {
-			saveMessage();
-		} else
-			wonMessage();
-	}
-	
-	
-	public void solve() throws UnknownHostException, IOException{
-		ArrayList<String> solution = new ArrayList<>();
-		this.viewmodel.solve();
-		for(int i=0;i<solution.size();i++){
+    public void save() throws IOException {
+        if (viewmodel.save()) {
+            saveMessage();
+        } else
+            wonMessage();
+    }
 
-		}
-	}
 	/*
 	public boolean wonTheGame() throws IOException, InterruptedException {
 		if(viewmodel.finish()==true)
 		{
-			
+
 		}
 	}*/
-	
+
 	//alert for the player, won,lose,save game
 	public void wonMessage() {
 		Alert alert = new Alert(AlertType.INFORMATION);
@@ -202,31 +224,32 @@ public class MainWindowsController implements Initializable {
 		alert.showAndWait();
 	}
 
-	public void saveMessage() {
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("Saved");
-		alert.setHeaderText(null);
-		alert.setContentText("Game saved");
-		alert.showAndWait();
-	}
-	public void errorMessage() {
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("OOPS Something is wrong");
-		alert.setHeaderText(null);
-		alert.setContentText("Game error");
-		alert.showAndWait();
-	}
-	//a dialog function with the player
+    public void saveMessage() {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Saved");
+        alert.setHeaderText(null);
+        alert.setContentText("Game saved");
+        alert.showAndWait();
+    }
+
+    public void errorMessage() {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("OOPS Something is wrong");
+        alert.setHeaderText(null);
+        alert.setContentText("Game error");
+        alert.showAndWait();
+    }
+//a dialog function with the player
 	//configuration Window show the port and the ip
-	public void configurationWindow() throws FileNotFoundException {
-			Dialog<Pair<String, String>> dialog = new Dialog<>();
+    public void configurationWindow() throws FileNotFoundException {
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
 			ButtonType saveButtonType = new ButtonType("save", ButtonData.OK_DONE);
 			dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 			GridPane grid = new GridPane();
 			TextField port = new TextField();
 			port.setPromptText(String.valueOf(modelpg.port));
 			TextField ip = new TextField();
-			ip.setPromptText(modelpg.host);
+        ip.setPromptText(modelpg.host);
 			grid.add(new Label("ip:"), 0, 1);
 			grid.add(ip, 1, 1);
 			grid.add(new Label("Port number:"), 0, 0);

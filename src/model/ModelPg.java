@@ -1,12 +1,12 @@
 package model;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.Socket;
 import java.net.Socket;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Scanner;
 
-import client.SolverClient;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -25,7 +24,6 @@ import javafx.collections.FXCollections;
 
 public class ModelPg extends Observable implements IModel {
 
-	private SolverClient m_solver;
 	public ListProperty<char[]> pgboard;
 	public String host;
 	public int port;
@@ -34,8 +32,6 @@ public class ModelPg extends Observable implements IModel {
 
 	// public IntegerProperty timer=new SimpleIntegerProperty();
 	public ModelPg() {
-		m_solver = new SolverClient(port, host);
-		m_solver.addObserver(this);
 		this.pgboard = new SimpleListProperty<>(FXCollections.observableArrayList(new ArrayList<>()));
 		UpdateBoard();
 		this.port = 6400;
@@ -45,31 +41,31 @@ public class ModelPg extends Observable implements IModel {
 
 
 //function that rotate the pipes and count the number of step
-	public void switchCell(int j, int i) {
+	public void switchCell(int i, int j) {
 		switch (this.pgboard.get(i)[j]) {
 		case '-':
 			this.pgboard.get(i)[j] = '|';
-			countStep.set(countStep.get() + 1);
+			//countStep.set(countStep.get() + 1);
 			break;
 		case '7':
 			this.pgboard.get(i)[j] = 'J';
-			countStep.set(countStep.get() + 1);
+			//countStep.set(countStep.get() + 1);
 			break;
 		case 'F':
 			this.pgboard.get(i)[j] = '7';
-			countStep.set(countStep.get() + 1);
+			//countStep.set(countStep.get() + 1);
 			break;
 		case 'J':
 			this.pgboard.get(i)[j] = 'L';
-			countStep.set(countStep.get() + 1);
+			//countStep.set(countStep.get() + 1);
 			break;
 		case 'L':
 			this.pgboard.get(i)[j] = 'F';
-			countStep.set(countStep.get() + 1);
+			//countStep.set(countStep.get() + 1);
 			break;
 		case '|':
 			this.pgboard.get(i)[j] = '-';
-			countStep.set(countStep.get() + 1);
+			//countStep.set(countStep.get() + 1);
 			break;
 		// start
 		case 's':
@@ -104,10 +100,39 @@ public class ModelPg extends Observable implements IModel {
 
 	}
 
-	public void solve() throws Exception {
-			m_solver.solve(this.host, this.port, pgboard);
-		
 
+	public List<String> solve() {
+
+//		Thread th = new Thread(() -> {
+		List<String> solution = new ArrayList<>();
+			try {
+				Socket theServer = new Socket(host, port);
+				PrintWriter out = new PrintWriter(theServer.getOutputStream());
+
+				for (int i = 0; i < pgboard.size(); ++i) {
+					out.println(new String(pgboard.get(i)));
+				}
+
+				out.println("done");
+				out.flush();
+				BufferedReader in = new BufferedReader(new InputStreamReader(theServer.getInputStream()));
+
+				String line;
+				while (!(line = in.readLine()).equals("done")) {
+					solution.add(line);
+				}
+
+				in.close();
+				out.close();
+				theServer.close();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return solution;
+//		});
+//
+//		th.start();
 	}
 
 	public void UpdateBoard() {
@@ -116,7 +141,7 @@ public class ModelPg extends Observable implements IModel {
 		this.pgboard.add("|7--L".toCharArray());
 		this.pgboard.add("|L-Fg".toCharArray());
 	}
-	
+
 	public boolean finishGame() throws IOException, InterruptedException {
 		if (serverSocket != null) {
 			BufferedReader inFromServer = new BufferedReader(new InputStreamReader(this.serverSocket.getInputStream()));
@@ -131,19 +156,19 @@ public class ModelPg extends Observable implements IModel {
 			outToServer.flush();
 
 			String line;
-			
-			if ((line = inFromServer.readLine()).equals("done")) 
+
+			if ((line = inFromServer.readLine()).equals("done"))
 				return true;
 		}
 		return false;
 
 	}
-	
-	
+
+
 	@Override
 	public void update(Observable arg0, Object arg1) {
 
-		List<String> solution = (List<String>) arg1;
+		//List<String> solution = (List<String>) arg1;
 
 		UpdateBoard();
 

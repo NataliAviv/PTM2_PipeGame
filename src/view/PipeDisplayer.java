@@ -23,6 +23,10 @@ public class PipeDisplayer extends Canvas {
 		this.pgboard=pgboard;
 		redraw();
 	}
+
+//	public void setSolution(List<String> sol) {
+//
+//    }
 	
 	public void redraw() {
 		if(pgboard!=null){

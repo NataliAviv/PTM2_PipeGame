@@ -3,6 +3,7 @@ package viewModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
+import java.util.List;
 import java.util.TimerTask;
 
 import javafx.beans.property.BooleanProperty;
@@ -23,7 +24,7 @@ public class ViewModel implements IViewModel {
 	private TimerTask task;
 	public IntegerProperty countStep=new SimpleIntegerProperty();
 	//public IntegerProperty timer=new SimpleIntegerProperty();
-	
+
 
 	public ViewModel(ModelPg modelpg) {
 		this.modelpg=modelpg;
@@ -35,8 +36,8 @@ public class ViewModel implements IViewModel {
 		this.isGoal.bind(modelpg.win);*/
 	}
 
-	public void switchCell(int j, int i) {
-		this.modelpg.switchCell(j, i);
+	public void switchCell(int i, int j) {
+		this.modelpg.switchCell(i, j);
 	}
 
 	
@@ -46,8 +47,8 @@ public class ViewModel implements IViewModel {
 
 	}
 
-	public void solve() {
-	//	this.modelpg.solve();
+	public List<String> solve() {
+		return this.modelpg.solve();
 
 	}
 	public void setPort(int port) {
@@ -75,5 +76,5 @@ public class ViewModel implements IViewModel {
 	{
 		return this.modelpg.finishGame();
 	}
-	
+
 }
