@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 
@@ -38,30 +39,30 @@ import theme.ThemeDisplayer;
 import viewModel.ViewModel;
 
 public class MainWindowsController implements Initializable {
-	@FXML
-	PipeDisplayer pipeDisplayer;
-	@FXML
-	Label countStep;
+    @FXML
+    PipeDisplayer pipeDisplayer;
+    @FXML
+    Label countStep;
     @FXML
     Label TimerLabel;
 
-	ViewModel viewmodel;
-	private ListProperty<char[]> pgboard;
-	ModelPg modelpg;
-	ThemeDisplayer theme;
-	private DoubleProperty timeSeconds= new SimpleDoubleProperty(0);
-	private StringProperty timeLeft;
-	private TimerTask task;
-	private Timer timer;
-	private double timeleft=0;
+    ViewModel viewmodel;
+    private ListProperty<char[]> pgboard;
+    ModelPg modelpg;
+    ThemeDisplayer theme;
+    private DoubleProperty timeSeconds = new SimpleDoubleProperty(0);
+    private StringProperty timeLeft;
+    private TimerTask task;
+    private Timer timer;
+    private double timeleft = 0;
 
-	public MainWindowsController() {
-		modelpg = new ModelPg();
-		viewmodel = new ViewModel(modelpg);
-		this.pgboard = new SimpleListProperty<>();
-		this.pgboard.bind(viewmodel.pgboard);
-		viewmodel.countStep.addListener((observable, oldValue, newValue)->countStep.setText(Integer.toString(viewmodel.countStep.get())));
-	}
+    public MainWindowsController() {
+        modelpg = new ModelPg();
+        viewmodel = new ViewModel(modelpg);
+        this.pgboard = new SimpleListProperty<>();
+        this.pgboard.bind(viewmodel.pgboard);
+        viewmodel.countStep.addListener((observable, oldValue, newValue) -> countStep.setText(Integer.toString(viewmodel.countStep.get())));
+    }
 
     public void MouseClick() {
         pipeDisplayer.addEventFilter(MouseEvent.MOUSE_CLICKED, (e) -> {
@@ -77,45 +78,48 @@ public class MainWindowsController implements Initializable {
                 System.out.println(W);
                 int j = (int) (event.getX() / W);
                 int i = (int) (event.getY() / H);
-				System.out.println(i+" "+j);
-				viewmodel.switchCell(i, j);
-				viewmodel.countStep.set(viewmodel.countStep.get() + 1);
-				pipeDisplayer.setpipeboard(pgboard);
-				if (viewmodel.isGoal()) {
+                System.out.println(i + " " + j);
+                viewmodel.switchCell(i, j);
+                viewmodel.countStep.set(viewmodel.countStep.get() + 1);
+                pipeDisplayer.setpipeboard(pgboard);
+                if (viewmodel.isGoal()) {
                     System.out.println("YOU WON!!!");
+                    stopTimer();
                     wonMessage();
+                    resetTimer();
+                    viewmodel.countStep.set(0);
+                    pipeDisplayer.setDisable(true);
                 }
-			}
-		});
+            }
+        });
 
-	}
+    }
 
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		countStep.setText("0");
-		//timer.setText("0");
-		pipeDisplayer.setDisable(true);
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        countStep.setText("0");
+        pipeDisplayer.setDisable(true);
         pipeDisplayer.setPipeData(pgboard, new FirstTheme());
         MouseClick();
     }
 
     public void start() {
         pipeDisplayer.setDisable(false);
-			 System.out.println("start the game!\n");
-			 startTimer();
+        System.out.println("start the game!\n");
+        startTimer();
 
-	}
-		public void stopTheGame() throws IOException
-		{
-			stopTimer();
-			//theme.stopMusic();
-			System.out.println("stop the game!\n");
+    }
 
-		}
+    public void stopTheGame() throws IOException {
+        stopTimer();
+        //theme.stopMusic();
+        System.out.println("stop the game!\n");
+
+    }
 
     public void solve() {
-        List<String> sol =  this.viewmodel.solve();
+        List<String> sol = this.viewmodel.solve();
 
         Thread th = new Thread(() -> {
 
@@ -133,8 +137,7 @@ public class MainWindowsController implements Initializable {
                     pipeDisplayer.setpipeboard(pgboard);
                     Thread.sleep(100);
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -154,47 +157,47 @@ public class MainWindowsController implements Initializable {
         }
     }
 
-	public void startTimer()  {
-	    TimerLabel.textProperty().bind(timeSeconds.asString());
-		timer = new Timer(true);
-		task = new TimerTask(){
-			@Override
-			public void run() {
-				timeleft+=0.1;
-				Platform.runLater(new Runnable() {
-					public void run() {timeSeconds.set(Double.parseDouble(String.format ("%,.2f", timeleft)));}
-				});
-			}
-		};
+    public void startTimer() {
+        TimerLabel.textProperty().bind(timeSeconds.asString());
+        timer = new Timer(true);
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                timeleft += 0.1;
+                Platform.runLater(new Runnable() {
+                    public void run() {
+                        timeSeconds.set(Double.parseDouble(String.format("%,.2f", timeleft)));
+                    }
+                });
+            }
+        };
 
-		timer.scheduleAtFixedRate(task, 0, 100);
+        timer.scheduleAtFixedRate(task, 0, 100);
 
     }
 
 
-	public void resetTimer()
-	{
-		timeleft=0;
-	}
+    public void resetTimer() {
+        timeleft = 0;
+    }
 
-	public void stopTimer()
-	{
-		timer.cancel();
-	}
+    public void stopTimer() {
+        timer.cancel();
+    }
 
-	public Double saveTimer()
-	{
-		return timeleft;
-	}
-	public void setFirstTheme() {
-		ThemeDisplayer firstTheme = new FirstTheme();
-		pipeDisplayer.setPipeTheme(firstTheme);
-	}
+    public Double saveTimer() {
+        return timeleft;
+    }
 
-	public void setSecondTheme() {
-		ThemeDisplayer secondTheme = new SecondTheme();
-		pipeDisplayer.setPipeTheme(secondTheme);
-	}
+    public void setFirstTheme() {
+        ThemeDisplayer firstTheme = new FirstTheme();
+        pipeDisplayer.setPipeTheme(firstTheme);
+    }
+
+    public void setSecondTheme() {
+        ThemeDisplayer secondTheme = new SecondTheme();
+        pipeDisplayer.setPipeTheme(secondTheme);
+    }
 
     public void save() throws IOException {
         if (viewmodel.save()) {
@@ -211,21 +214,22 @@ public class MainWindowsController implements Initializable {
 		}
 	}*/
 
-	//alert for the player, won,lose,save game
-	public void wonMessage() {
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("Well Done");
-		alert.setHeaderText(null);
-		alert.setContentText("You Won! :)");
-		alert.showAndWait();
-	}
-	public void LossMessage() {
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("Sorry you loss");
-		alert.setHeaderText(null);
-		alert.setContentText("You loss :( ");
-		alert.showAndWait();
-	}
+    //alert for the player, won,lose,save game
+    public void wonMessage() {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Well Done");
+        alert.setHeaderText(null);
+        alert.setContentText("You Won! :)");
+        alert.showAndWait();
+    }
+
+    public void LossMessage() {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Sorry you loss");
+        alert.setHeaderText(null);
+        alert.setContentText("You loss :( ");
+        alert.showAndWait();
+    }
 
     public void saveMessage() {
         Alert alert = new Alert(AlertType.INFORMATION);
@@ -242,44 +246,45 @@ public class MainWindowsController implements Initializable {
         alert.setContentText("Game error");
         alert.showAndWait();
     }
-//a dialog function with the player
-	//configuration Window show the port and the ip
+
+    //a dialog function with the player
+    //configuration Window show the port and the ip
     public void configurationWindow() throws FileNotFoundException {
         Dialog<Pair<String, String>> dialog = new Dialog<>();
-			ButtonType saveButtonType = new ButtonType("save", ButtonData.OK_DONE);
-			dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
-			GridPane grid = new GridPane();
-			TextField port = new TextField();
-			port.setPromptText(String.valueOf(modelpg.port));
-			TextField ip = new TextField();
+        ButtonType saveButtonType = new ButtonType("save", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+        GridPane grid = new GridPane();
+        TextField port = new TextField();
+        port.setPromptText(String.valueOf(modelpg.port));
+        TextField ip = new TextField();
         ip.setPromptText(modelpg.host);
-			grid.add(new Label("ip:"), 0, 1);
-			grid.add(ip, 1, 1);
-			grid.add(new Label("Port number:"), 0, 0);
-			grid.add(port, 1, 0);
-			Node loginButton = dialog.getDialogPane().lookupButton(saveButtonType);
-			loginButton.setDisable(true);
-			port.textProperty().addListener((observable, oldValue, newValue) -> {
-				loginButton.setDisable(newValue.trim().isEmpty());
-			});
+        grid.add(new Label("ip:"), 0, 1);
+        grid.add(ip, 1, 1);
+        grid.add(new Label("Port number:"), 0, 0);
+        grid.add(port, 1, 0);
+        Node loginButton = dialog.getDialogPane().lookupButton(saveButtonType);
+        loginButton.setDisable(true);
+        port.textProperty().addListener((observable, oldValue, newValue) -> {
+            loginButton.setDisable(newValue.trim().isEmpty());
+        });
 
-			dialog.getDialogPane().setContent(grid);
-			Platform.runLater(() -> port.requestFocus());
-			dialog.setResultConverter(dialogButton -> {
-				if (dialogButton == saveButtonType) {
-					return new Pair<>(port.getText(), ip.getText());
-				}
-				return null;
-			});
+        dialog.getDialogPane().setContent(grid);
+        Platform.runLater(() -> port.requestFocus());
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveButtonType) {
+                return new Pair<>(port.getText(), ip.getText());
+            }
+            return null;
+        });
 
-			Optional<Pair<String, String>> result = dialog.showAndWait();
-			if(result.isPresent()) {
-				String resultPort = result.get().getKey();
-				String resultIp = result.get().getValue();
-				modelpg.setPort(Integer.parseInt(resultPort));
-				modelpg.setHost(resultIp);
-			}
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            String resultPort = result.get().getKey();
+            String resultIp = result.get().getValue();
+            modelpg.setPort(Integer.parseInt(resultPort));
+            modelpg.setHost(resultIp);
+        }
 
-		}
+    }
 
 }
