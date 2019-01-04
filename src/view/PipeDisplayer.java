@@ -1,8 +1,6 @@
 package view;
 
 import java.util.List;
-
-import javafx.beans.property.ListProperty;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
