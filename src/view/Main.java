@@ -11,6 +11,8 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.fxml.FXMLLoader;
+import model.ModelPg;
+import viewModel.ViewModel;
 
 
 public class Main extends Application {

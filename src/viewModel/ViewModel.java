@@ -31,8 +31,8 @@ public class ViewModel implements IViewModel {
 		this.isGoal.bind(modelpg.win);*/
 	}
 
-	public void switchCell(int j, int i) {
-		this.modelpg.switchCell(j, i);
+	public void switchCell(int i, int j) {
+		this.modelpg.switchCell(i, j);
 	}
 
 	
@@ -42,8 +42,8 @@ public class ViewModel implements IViewModel {
 
 	}
 
-	public void solve() {
-		this.modelpg.solve();
+	public List<String> solve() {
+		return this.modelpg.solve();
 
 	}
 	public void setPort(int port) {

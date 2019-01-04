@@ -1,11 +1,9 @@
 package model;
 
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.net.Socket;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,7 +40,7 @@ public class ModelPg extends Observable implements IModel {
 
 	
 
-	public void switchCell(int j, int i) {
+	public void switchCell(int i, int j) {
 		switch (this.pgboard.get(i)[j]) {
 		case '-':
 			this.pgboard.get(i)[j] = '|';
@@ -87,27 +85,51 @@ public class ModelPg extends Observable implements IModel {
 	}
 
 
-	public void solve() {
-		try {
-			m_solver.solve(this.host, this.port, pgboard);
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-		}
+	public List<String> solve() {
 
+//		Thread th = new Thread(() -> {
+		List<String> solution = new ArrayList<>();
+			try {
+				Socket theServer = new Socket(host, port);
+				PrintWriter out = new PrintWriter(theServer.getOutputStream());
+
+				for (int i = 0; i < pgboard.size(); ++i) {
+					out.println(new String(pgboard.get(i)));
+				}
+
+				out.println("done");
+				out.flush();
+				BufferedReader in = new BufferedReader(new InputStreamReader(theServer.getInputStream()));
+
+				String line;
+				while (!(line = in.readLine()).equals("done")) {
+					solution.add(line);
+				}
+
+				in.close();
+				out.close();
+				theServer.close();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return solution;
+//		});
+//
+//		th.start();
 	}
 
 	public void UpdateBoard() {
 		this.pgboard.add("s-|7-".toCharArray());
 		this.pgboard.add("|-J--".toCharArray());
-		this.pgboard.add("|7--L".toCharArray());
+		//this.pgboard.add("|7--L".toCharArray());
 		this.pgboard.add("|L-Fg".toCharArray());
 	}
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
 
-		List<String> solution = (List<String>) arg1;
+		//List<String> solution = (List<String>) arg1;
 
 		UpdateBoard();
 
