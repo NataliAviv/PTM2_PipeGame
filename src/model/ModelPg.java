@@ -49,23 +49,18 @@ public class ModelPg extends Observable implements IModel {
 			break;
 		case '7':
 			this.pgboard.get(i)[j] = 'J';
-			//countStep.set(countStep.get() + 1);
 			break;
 		case 'F':
 			this.pgboard.get(i)[j] = '7';
-			//countStep.set(countStep.get() + 1);
 			break;
 		case 'J':
 			this.pgboard.get(i)[j] = 'L';
-			//countStep.set(countStep.get() + 1);
 			break;
 		case 'L':
 			this.pgboard.get(i)[j] = 'F';
-			//countStep.set(countStep.get() + 1);
 			break;
 		case '|':
 			this.pgboard.get(i)[j] = '-';
-			//countStep.set(countStep.get() + 1);
 			break;
 		// start
 		case 's':
@@ -92,9 +87,16 @@ public class ModelPg extends Observable implements IModel {
 		while (scan.hasNext()) {
 			char[] line = null;
 			String str = scan.nextLine();
-			line = str.toCharArray();
-			System.out.println(line);
-			this.pgboard.add(line);
+			if (str.contains("step")) {
+
+				countStep.set(Integer.parseInt(str.split(":")[1]));
+
+			}
+			else {
+				line = str.toCharArray();
+				System.out.println(line);
+				this.pgboard.add(line);
+			}
 		}
 		scan.close();
 
@@ -138,7 +140,7 @@ public class ModelPg extends Observable implements IModel {
 	public void UpdateBoard() {
 		this.pgboard.add("s-|7-".toCharArray());
 		this.pgboard.add("|-J--".toCharArray());
-		this.pgboard.add("|7--L".toCharArray());
+		//this.pgboard.add("|7--L".toCharArray());
 		this.pgboard.add("|L-Fg".toCharArray());
 	}
 
@@ -193,10 +195,6 @@ public class ModelPg extends Observable implements IModel {
 
 	}
 
-	public boolean isGoalState() {
-		return false;
-	}
-
 	public boolean save() throws IOException {
 		// Get a Calendar and set it to the current time.
 		Calendar cal = Calendar.getInstance();
@@ -208,12 +206,12 @@ public class ModelPg extends Observable implements IModel {
 			System.out.println("Created New File To Save To");
 			PrintWriter pr = new PrintWriter(file);
 			String s;
-			for (int i = 0; i < this.pgboard.getSize() - 1; i++) {
+			for (int i = 0; i < this.pgboard.getSize() ; i++) {
 				s = new String(this.pgboard.get(i));
 				pr.println(s);
-				pr.println("step:" + countStep.get());
 				//pr.println("time" + timer.get());
 			}
+			pr.println("step:" + countStep.get());
 			pr.close();
 			System.out.println("The level saved in levels folder");
 		}

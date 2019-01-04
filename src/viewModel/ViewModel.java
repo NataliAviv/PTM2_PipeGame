@@ -30,7 +30,7 @@ public class ViewModel implements IViewModel {
 		this.modelpg=modelpg;
 		this.pgboard = new SimpleListProperty<>();
 		this.pgboard.bind(modelpg.pgboard);
-		this.countStep.bind(modelpg.countStep);
+		//this.countStep.bind(modelpg.countStep);
 		//this.timer.bind(modelpg.timer);
 		/*this.isGoal = new SimpleBooleanProperty();
 		this.isGoal.bind(modelpg.win);*/
